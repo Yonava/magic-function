@@ -1,25 +1,18 @@
-import { Annotation, AnnotationsChange } from '@core/annotations/index';
+import { AnnotationsChange } from '@core/annotations/index';
 import { NodePositionStreamControls } from '@graph/core/positions/types';
 import { ConsumerEventMap } from '@graph/create-graph/consumer-events';
 import { UserId } from '@multiplayer/protocol/room';
 import Fraction from 'fraction.js';
 import * as Y from 'yjs';
 
-import { computed, ref } from 'vue';
-
 import { Graph } from '../../graph/types.ts';
 import {
-  DocAnnotation,
   annotationFromDoc,
   annotationToDoc,
   readAnnotationsMap,
 } from '../../multiplayer/doc/annotations.ts';
 import { createDocHistory } from '../../multiplayer/doc/history.ts';
-import {
-  BINDING_ORIGIN,
-  RECONCILE_ORIGIN,
-  isOwnWrite,
-} from '../../multiplayer/doc/origins.ts';
+import { RECONCILE_ORIGIN, isOwnWrite } from '../../multiplayer/doc/origins.ts';
 import { createDocWriter } from '../../multiplayer/doc/writer.ts';
 import { DocBindMode, DocBinding } from '../../product/types.ts';
 

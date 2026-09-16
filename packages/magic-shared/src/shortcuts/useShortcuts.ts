@@ -18,6 +18,16 @@ export const resolveShortcutKey = (key: ShortcutKey) =>
     ? `${isMac() ? 'meta' : 'ctrl'}+${key.slice(MOD.length)}`
     : key) as Key;
 
+/**
+ * alias is bound here rather than stored on the shortcut, so the help menu still
+ * lists the single key the shortcut declared.
+ */
+const boundKeys = (key: ShortcutKey): Key[] => {
+  const resolved = resolveShortcutKey(key);
+  const aliasesDelete = resolved === 'backspace' && !isMac();
+  return aliasesDelete ? [resolved, 'delete'] : [resolved];
+};
+
 export type ShortcutItem = WithHelpMenuEntry & {
   id: string;
   key: ShortcutKey;
@@ -45,14 +55,18 @@ export const useShortcuts = (): ShortcutControls => {
       return;
     }
     shortcuts.value.push(shortcut);
-    ctrlKeys.add(resolveShortcutKey(shortcut.key), shortcut.callback);
+    for (const key of boundKeys(shortcut.key)) {
+      ctrlKeys.add(key, shortcut.callback);
+    }
   };
 
   const remove: ShortcutControls['remove'] = (id) => {
     const shortcut = shortcuts.value.find((s) => s.id === id);
     if (!shortcut) return;
     shortcuts.value = shortcuts.value.filter((s) => s.id !== id);
-    ctrlKeys.remove(resolveShortcutKey(shortcut.key), shortcut.callback);
+    for (const key of boundKeys(shortcut.key)) {
+      ctrlKeys.remove(key, shortcut.callback);
+    }
   };
 
   const useShortcut: ShortcutControls['useShortcut'] = ({
